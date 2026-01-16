@@ -13,7 +13,7 @@ connection.connect((err) => {
         console.error('Erreur de connexion  a la base de données :', err);
         return;
     }
-    console.log('connectea a la base de donnees MySQL');
+    console.log('connecte a la base de donnees MySQL');
 });
 
 app.use(express.static('public'));
@@ -27,10 +27,21 @@ app.get('/info', (req, res) => { // C'est une route mais type "get" donc que par
     res.json({ cle1: 'crée compte', cle2: '' }); // Requet json mieux compri par navigateur
 });
 
-app.post('/register', (req, res) => { // C'est une route mais type "post" donc que par formulaire
-    console.log('Données reçues pour l\'inscription');
-    console.log(req.body);
-    res.send('crée compte');
+app.post('/register', (req, res) => {
+
+connection.query(
+  'INSERT INTO User ('login', 'password') VALUES (?,?)',
+  [req.body.inputValue , req.body.inputValue2],
+  (err, results) => {
+    if (err) {
+      console.error('Erreur lors de l\'insertion dans la base de données :', err);
+      res.status(500).json({ message: 'Erreur serveur' });
+      return;
+    }
+    console.log('Insertion réussie, ID utilisateur :', results.insertId);
+    res.json({ message: 'Inscription réussie !', userId: results.insertId });
+  }
+);
 });
 
 app.listen(3000, () => { //express écoute sur le port 3000 et affiche un message dans le console
