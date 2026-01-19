@@ -30,7 +30,8 @@ app.get('/info', (req, res) => { // C'est une route mais type "get" donc que par
 app.post('/register', (req, res) => {
 
 connection.query(
-  'INSERT INTO User ('login', 'password') VALUES (?,?)',
+  'INSERT INTO `User` (`login`, `password`) VALUES (?,?)',
+  //INSERT INTO `User`(`id`, `login`, `password`, `isAdmin`) VALUES ('[value-1]','[value-2]','[value-3]','[value-4]')
   [req.body.inputValue , req.body.inputValue2],
   (err, results) => {
     if (err) {
