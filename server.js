@@ -27,6 +27,17 @@ app.get('/info', (req, res) => { // C'est une route mais type "get" donc que par
     res.json({ cle1: 'crée compte', cle2: '' }); // Requet json mieux compri par navigateur
 });
 
+app.get('/users', (req, res) => {
+  connection.query('SELECT * FROM User', (err, results) => {
+    if (err) {
+      console.error('Erreur lors de la récupération des utilisateurs :', err);
+      res.status(500).json({ message: 'Erreur serveur' });
+      return;
+    }
+    res.json(results);
+  });
+});
+
 app.post('/register', (req, res) => {
 
 connection.query(
