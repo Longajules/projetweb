@@ -49,3 +49,23 @@ window.onload = () => {
         });
     });
 }
+
+const loginButton = document.getElementById('loginButton');
+loginButton.addEventListener('click', () => {
+    const loginInput = document.getElementById('loginInput').value;
+    const passwordInput = document.getElementById('passwordInput').value;
+
+    fetch('/connexion', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ login: loginInput, password: passwordInput })
+    }).then(response => response.json())
+        .then(data => {
+            alert(data.message);
+            alert('ID utilisateur : ' + data.user.id);
+            localStorage.setItem('userId', data.user.id);
+           
+        });
+});

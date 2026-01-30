@@ -1,6 +1,11 @@
 const express = require('express'); // var expresse prend expresse pour le http
 const app = express(); // instasie expresse
 const mysql = require('mysql2');
+
+
+app.use(express.static('public'));
+app.use(express.json());
+
 const connection = mysql.createConnection({
     host: '172.29.18.119',
     user: 'userServerNode',
@@ -16,8 +21,7 @@ connection.connect((err) => {
     console.log('connecte a la base de donnees MySQL');
 });
 
-app.use(express.static('public'));
-app.use(express.json());
+//ROUUUUTTTTEE----------------------
 
 app.get('/login', (req, res) => { // C'est une route type get donc par navigateur
     res.send('page login');
@@ -40,6 +44,8 @@ app.get('/users', (req, res) => {
 
 app.post('/register', (req, res) => {
 
+
+  
 connection.query(
   'INSERT INTO `User` (`login`, `password`) VALUES (?,?)',
   //INSERT INTO `User`(`id`, `login`, `password`, `isAdmin`) VALUES ('[value-1]','[value-2]','[value-3]','[value-4]')
@@ -56,6 +62,26 @@ connection.query(
 );
 });
 
-app.listen(3000, () => { //express écoute sur le port 3000 et affiche un message dans le console
+app.post('/connexion', (req, res) => {  
+  console.log(req.body);
+  //on récupère le login et le password
+  const { login, password } = req.body;
+  connection.query('SELECT * FROM User WHERE login = ? AND password = ?', [login, password], (err, results) => {
+      if (err) {
+        console.error('Erreur lors de la vérification des identifiants :', err);
+        res.status(500).json({ message: 'Erreur serveur' });
+        return;
+      }
+      if (results.length === 0) {
+        res.status(401).json({ message: 'Identifiants invalides' });
+        return;
+      }
+      // Identifiants valides 
+      //renvoi les informations du user
+      res.json({ message: 'Connexion réussie !', user: results[0] });
+    });
+});
+
+app.listen(3001, () => { //express écoute sur le port 3000 et affiche un message dans le console
     console.log('server runing')
 });  //Le poind virgule c'est juste pour dire la fin de la fonction
